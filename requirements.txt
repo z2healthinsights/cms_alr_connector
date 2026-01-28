@@ -1,3 +1,4 @@
 duckdb
 dbt-core
 dbt-duckdb
+urllib3<2
