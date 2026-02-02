@@ -33,9 +33,54 @@ add_calculated_month AS (
     mfp.*
   FROM aalr_exploded_by_enrollflag as aalr
   LEFT JOIN {{ ref('mssp_file_parameters') }} as mfp ON aalr.PERFORMANCE_YEAR = mfp.PERFORMANCE_YEAR AND aalr.file_period = mfp.file_period
+),
+
+top_tin AS (
+  SELECT
+    file_period,
+    performance_year,
+    ITERATION,
+    BENE_MBI_ID,
+    MASTER_ID,
+    B_EM_LINE_CNT_T
+  FROM {{ ref('stg_aalr2_assigned_beneficiaries_tin')}}
+  QUALIFY ROW_NUMBER() OVER(PARTITION BY BENE_MBI_ID, file_period, performance_year, ITERATION ORDER BY B_EM_LINE_CNT_T DESC) = 1
+),
+
+top_npi AS (
+  SELECT
+    BENE_MBI_ID,
+    file_period,
+    performance_year,
+    ITERATION,
+    MASTER_ID,
+    NPI_USED,
+    PCS_COUNT
+  FROM {{ ref('stg_aalr4_assigned_beneficiaries_tin_npi')}}
+  QUALIFY ROW_NUMBER() OVER(PARTITION BY BENE_MBI_ID, file_period, performance_year, ITERATION, MASTER_ID ORDER BY PCS_COUNT DESC) = 1
+),
+
+assignable_or_voluntary AS (
+  
 )
 
 SELECT
-  row_number() OVER(PARTITION BY BENE_MBI_ID, enroll_month ORDER BY priority, performance_year DESC, ITERATION DESC) AS row_number,
-  *
-FROM add_calculated_month
+  row_number() OVER(PARTITION BY acm.BENE_MBI_ID, acm.enroll_month ORDER BY acm.priority, acm.performance_year DESC, acm.ITERATION DESC) AS row_number,
+  acm.*,
+  tt.MASTER_ID as TOP_TIN,
+  tt.B_EM_LINE_CNT_T as TIN_EM_COUNT,
+  tn.NPI_USED as TOP_NPI,
+  tn.PCS_COUNT as NPI_EM_COUNT
+FROM add_calculated_month as acm
+LEFT JOIN top_tin as tt
+  ON acm.BENE_MBI_ID = tt.BENE_MBI_ID
+  AND acm.FILE_PERIOD = tt.FILE_PERIOD
+  AND acm.PERFORMANCE_YEAR = tt.PERFORMANCE_YEAR
+  -- AND acm.ITERATION = tt.ITERATION -- Normalize iterations to not include file types, then add back in
+LEFT JOIN top_npi AS tn
+  ON acm.BENE_MBI_ID = tn.BENE_MBI_ID
+  -- Only grap NPIs from the top TIN (it's possible an individual NPI NOT assigned to the top TIN has the most visits)
+  AND tt.MASTER_ID = tn.MASTER_ID 
+  AND acm.FILE_PERIOD = tn.FILE_PERIOD
+  AND acm.PERFORMANCE_YEAR = tn.PERFORMANCE_YEAR
+  -- AND acm.ITERATION = tn.ITERATION -- Normalize iterations to not include file types, then add back in
