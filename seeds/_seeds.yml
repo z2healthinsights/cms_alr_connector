@@ -1,0 +1,4 @@
+version: 2
+
+seeds:
+  - name: mssp_file_parameters
