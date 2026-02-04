@@ -26,40 +26,37 @@ aalr_exploded_by_enrollflag AS (
   CROSS JOIN scaffold_months sm
 ),
 
+-- Calculate enrollment month for each record based on the period the file is for and the month number from the enrollflag
+-- 
 add_calculated_month AS (
-  SELECT 
-    CAST(date_add(mfp.period_start_date, INTERVAL (aalr.month_number - 1) MONTH) AS date) as enroll_month, -- @TODO - Refactor to macro
+  SELECT
+    CAST({{ dbt.dateadd('month', 'aalr.month_number - 1', 'mfp.period_start_date') }} AS DATE) AS enroll_month,
     aalr.*,
     mfp.*
   FROM aalr_exploded_by_enrollflag as aalr
   LEFT JOIN {{ ref('mssp_file_parameters') }} as mfp ON aalr.PERFORMANCE_YEAR = mfp.PERFORMANCE_YEAR AND aalr.file_period = mfp.file_period
 ),
 
+-- Filter to only the top MASTER_ID (TIN) based on EM counts
 top_tin AS (
-  SELECT
-    file_period,
-    performance_year,
-    ITERATION,
-    BENE_MBI_ID,
-    MASTER_ID,
-    B_EM_LINE_CNT_T
-  FROM {{ ref('stg_aalr2_assigned_beneficiaries_tin') }}
-  -- @TODO: Refactor qualify statement
-  QUALIFY ROW_NUMBER() OVER(PARTITION BY BENE_MBI_ID, file_period, performance_year, ITERATION ORDER BY B_EM_LINE_CNT_T DESC) = 1
+  {{ 
+    dbt_utils.deduplicate(
+      relation=ref('stg_aalr2_assigned_beneficiaries_tin'),
+      partition_by='BENE_MBI_ID, file_period, performance_year, ITERATION',
+      order_by='B_EM_LINE_CNT_T desc'
+    ) 
+  }}
 ),
 
+-- Filter to only the top NPI for each Master_ID (TIN) based on PCS counts
 top_npi AS (
-  SELECT
-    BENE_MBI_ID,
-    file_period,
-    performance_year,
-    ITERATION,
-    MASTER_ID,
-    NPI_USED,
-    PCS_COUNT
-  FROM {{ ref('stg_aalr4_assigned_beneficiaries_tin_npi') }}
-  -- @TODO: Refactor qualify statement
-  QUALIFY ROW_NUMBER() OVER(PARTITION BY BENE_MBI_ID, file_period, performance_year, ITERATION, MASTER_ID ORDER BY PCS_COUNT DESC) = 1
+  {{ 
+    dbt_utils.deduplicate(
+      relation=ref('stg_aalr4_assigned_beneficiaries_tin_npi'),
+      partition_by='BENE_MBI_ID, file_period, performance_year, ITERATION, MASTER_ID',
+      order_by='PCS_COUNT desc'
+    ) 
+  }}
 ),
 
 beneficiary_turnover AS (
@@ -104,7 +101,7 @@ LEFT JOIN top_tin as tt
   -- AND acm.ITERATION = tt.ITERATION -- Normalize iterations to not include file types, then add back in
 LEFT JOIN top_npi AS tn
   ON acm.BENE_MBI_ID = tn.BENE_MBI_ID
-  -- Only grap NPIs from the top TIN (it's possible an individual NPI NOT assigned to the top TIN has the most visits)
+  -- Only grab NPIs from the top TIN (it's possible an individual NPI NOT assigned to the top TIN has the most visits)
   AND tt.MASTER_ID = tn.MASTER_ID 
   AND acm.FILE_PERIOD = tn.FILE_PERIOD
   AND acm.PERFORMANCE_YEAR = tn.PERFORMANCE_YEAR
