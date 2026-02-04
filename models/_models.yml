@@ -2,8 +2,58 @@ version: 1
 
 models:
 ### final
-  - name: aalr_pivot
-    description: Assignment list report, pivoted to have one row per beneficiary per month
+  - name: enrollment
+    description: Final enrollment table in the source format for the CCLF connector
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+### intermediate
+  - name: aalr_history
+    description: Combined table of all historical assignment list reports, pivoted to have one row per beneficiary per month
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+  - name: aalr_history_filtered
+    description: Filtered version of aalr_history with only valid records from the latest AALR file for a given enroll_month
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+### staging
+  - name: stg_aalr1_assigned_beneficiaries
+    description: Staged version of the raw aalr1_assigned_beneficiaries table
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+  - name: stg_aalr2_assigned_beneficiaries_tin
+    description: Staged version of the raw aalr2_assigned_beneficiaries_tin table
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+  - name: stg_aalr4_assigned_beneficiaries_tin_npi
+    description: Staged version of the raw aalr4_assigned_beneficiaries_tin_npi table
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+  - name: stg_aalr5_beneficiary_turnover
+    description: Staged version of the raw aalr5_beneficiary_turnover table
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+  - name: stg_aalr6_beneficiaries_assignable_or_voluntary
+    description: Staged version of the raw aalr6_beneficiaries_assignable_or_voluntary table
+    config:
+      schema: |
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+
+  - name: stg_aalr9_beneficiaries_underserved
+    description: Staged version of the raw aalr9_beneficiaries_underserved table
     config:
       schema: |
         {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
