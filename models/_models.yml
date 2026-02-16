@@ -6,7 +6,7 @@ models:
     description: Final enrollment table in the source format for the CCLF connector
     config:
       schema: |
-        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_input_layer{% else %}input_layer{%- endif -%}
+        {%- if var('tuva_schema_prefix',None) != None -%}{{var('tuva_schema_prefix')}}_raw_data{% else %}raw_data{%- endif -%}
 
 ### intermediate
   - name: aalr_history

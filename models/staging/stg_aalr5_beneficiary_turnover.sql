@@ -12,7 +12,6 @@ SELECT
 	NO_US_R02,
 	MDM_R04,
 	NOFND_R06,
-	FILE_PATH,
 	DIRECTORY_NAME,
 	FILE_NAME,
 	{{ extract_file_metadata() }}

@@ -9,7 +9,6 @@ SELECT
 	MASTER_ID,
 	NPI_USED,
 	PCS_COUNT,
-	FILE_PATH,
 	DIRECTORY_NAME,
 	FILE_NAME,
 	{{ extract_file_metadata() }}

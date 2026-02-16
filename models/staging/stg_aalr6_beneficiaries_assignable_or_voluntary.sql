@@ -7,7 +7,6 @@ SELECT
 	BENE_BRTH_DT,
 	BENE_DEATH_DT,
 	VA_SELECTION_ONLY,
-	FILE_PATH,
 	DIRECTORY_NAME,
 	FILE_NAME,
 	{{ extract_file_metadata() }}

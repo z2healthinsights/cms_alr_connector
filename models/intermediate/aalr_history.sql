@@ -8,7 +8,7 @@ WITH scaffold_months AS (
     {% endfor %}
 ),
 
--- Cross join scaffoled months to each enrollment record, set enroll_flag if
+-- Cross join scaffolded months to each enrollment record, set enroll_flag if
 -- enrollflag is set for the given month
 -- Example: 
 -- enrollflag1 and month_number = 1 then enrollflag1 value, otherwise NULL
@@ -27,12 +27,15 @@ aalr_exploded_by_enrollflag AS (
 ),
 
 -- Calculate enrollment month for each record based on the period the file is for and the month number from the enrollflag
--- 
 add_calculated_month AS (
   SELECT
-    CAST({{ dbt.dateadd('month', 'aalr.month_number - 1', 'mfp.period_start_date') }} AS DATE) AS enroll_month,
+    CAST({{ dbt.dateadd('month', 'aalr.month_number - 1', 'mfp.period_start_date') }} AS DATE) AS enroll_month, -- Date add period_start_date + month number of flag - 1
     aalr.*,
-    mfp.*
+    mfp.report_year,
+    mfp.period_start_date,
+    mfp.period_end_date,
+    mfp.priority,
+    mfp.file_type as alr_file_type
   FROM aalr_exploded_by_enrollflag as aalr
   LEFT JOIN {{ ref('mssp_file_parameters') }} as mfp ON aalr.PERFORMANCE_YEAR = mfp.PERFORMANCE_YEAR AND aalr.file_period = mfp.file_period
 ),
@@ -42,7 +45,7 @@ top_tin AS (
   {{ 
     dbt_utils.deduplicate(
       relation=ref('stg_aalr2_assigned_beneficiaries_tin'),
-      partition_by='BENE_MBI_ID, file_period, performance_year, ITERATION',
+      partition_by='BENE_MBI_ID, file_period, PERFORMANCE_YEAR, ITERATION',
       order_by='B_EM_LINE_CNT_T desc'
     ) 
   }}
@@ -53,12 +56,13 @@ top_npi AS (
   {{ 
     dbt_utils.deduplicate(
       relation=ref('stg_aalr4_assigned_beneficiaries_tin_npi'),
-      partition_by='BENE_MBI_ID, file_period, performance_year, ITERATION, MASTER_ID',
+      partition_by='BENE_MBI_ID, file_period, PERFORMANCE_YEAR, ITERATION, MASTER_ID',
       order_by='PCS_COUNT desc'
     ) 
   }}
 ),
 
+-- Get latest beneficiary turnover reason for the year (if a member leaves, comes back, and leaves again, we'll get the latest)
 beneficiary_turnover AS (
   SELECT
     row_number() OVER(PARTITION BY bt.BENE_MBI_ID, bt.performance_year ORDER BY mfp.priority, bt.ITERATION DESC) AS row_number,
@@ -75,7 +79,7 @@ latest_beneficiary_turnover AS (
 )
 
 SELECT
-  row_number() OVER(PARTITION BY acm.BENE_MBI_ID, acm.enroll_month ORDER BY acm.priority, acm.performance_year DESC, acm.ITERATION DESC) AS row_number,
+  row_number() OVER(PARTITION BY acm.BENE_MBI_ID, acm.enroll_month ORDER BY acm.performance_year DESC, acm.priority, acm.ITERATION DESC) AS row_number,
   acm.*,
   tt.MASTER_ID as TOP_TIN,
   tt.B_EM_LINE_CNT_T as TIN_EM_COUNT,

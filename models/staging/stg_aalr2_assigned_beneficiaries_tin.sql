@@ -8,7 +8,6 @@ SELECT
 	BENE_DEATH_DT,
 	MASTER_ID,
 	B_EM_LINE_CNT_T,
-	FILE_PATH,
 	DIRECTORY_NAME,
 	FILE_NAME,
 	{{ extract_file_metadata() }}

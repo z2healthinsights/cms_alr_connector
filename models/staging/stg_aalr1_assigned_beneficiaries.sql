@@ -174,7 +174,6 @@ SELECT
     LTI_STATUS,
     BENE_RACE_CD,
     BENE_PSNYRS_DUAL,
-    FILE_PATH,
     DIRECTORY_NAME,
     FILE_NAME,
     {{ extract_file_metadata() }}
