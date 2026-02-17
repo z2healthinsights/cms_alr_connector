@@ -1,0 +1,15 @@
+version: 1
+
+sources:
+  - name: cms_ssp_reports
+    config:
+      enabled: "{{ var('demo_data_only', false) == false }}"
+    database: "{{ var('input_database') }}"
+    schema:  "{{ var('input_schema') }}"
+    tables:
+      - name: aalr1_assigned_beneficiaries
+      - name: aalr2_assigned_beneficiaries_tin
+      - name: aalr4_assigned_beneficiaries_tin_npi
+      - name: aalr5_beneficiary_turnover
+      - name: aalr6_beneficiaries_assignable_or_voluntary
+      - name: aalr9_beneficiaries_underserved

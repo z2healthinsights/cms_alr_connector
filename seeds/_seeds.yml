@@ -1,0 +1,7 @@
+version: 2
+
+seeds:
+  - name: mssp_file_parameters
+    config:
+      schema: |
+       {%- if var('tuva_schema_prefix',None) != None -%}_{{var('tuva_schema_prefix')}}_raw_data{% else %}raw{%- endif -%}

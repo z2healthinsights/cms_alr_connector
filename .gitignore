@@ -1,2 +1,6 @@
+target/
+dbt_packages/
+logs/
 .direnv/
 .envrc
+package-lock.yml
