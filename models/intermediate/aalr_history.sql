@@ -79,7 +79,7 @@ latest_beneficiary_turnover AS (
 )
 
 SELECT
-  row_number() OVER(PARTITION BY acm.BENE_MBI_ID, acm.enroll_month ORDER BY acm.performance_year DESC, acm.priority, acm.ITERATION DESC) AS row_number,
+  row_number() OVER(PARTITION BY acm.BENE_MBI_ID, acm.enroll_month ORDER BY acm.performance_year, acm.priority, acm.ITERATION DESC) AS row_number,
   acm.*,
   tt.MASTER_ID as TOP_TIN,
   tt.B_EM_LINE_CNT_T as TIN_EM_COUNT,
