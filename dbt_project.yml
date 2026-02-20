@@ -2,10 +2,10 @@
 name: 'cms_aalr_connector'
 version: '0.1.0'
 
-profile: 'default'
+profile: 'vbca'
 
 vars:
-  input_database: tuva
+  input_database: vbca_tuva
   input_schema: raw_data
   demo_data_only: false
 
