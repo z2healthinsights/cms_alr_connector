@@ -4,3 +4,4 @@ logs/
 .direnv/
 .envrc
 package-lock.yml
+CLAUDE.md
