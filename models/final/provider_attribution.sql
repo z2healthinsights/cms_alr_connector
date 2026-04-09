@@ -4,7 +4,7 @@ SELECT
   , cast({{ format_yyyymm('enroll_month') }} as {{ dbt.type_string() }}) as year_month
   , cast('Medicare' as {{ dbt.type_string() }}) as payer
   , cast(null as {{ dbt.type_string() }}) as {{ quote_column('plan') }}
-  , cast('CMS ALR' as {{ dbt.type_string() }}) as data_source
+  , cast('medicare' as {{ dbt.type_string() }}) as data_source
   , cast(top_npi as {{ dbt.type_string() }}) as payer_attributed_provider
   , cast(top_tin as {{ dbt.type_string() }}) as payer_attributed_provider_practice
   , cast(null as {{ dbt.type_string() }}) as payer_attributed_provider_organization
