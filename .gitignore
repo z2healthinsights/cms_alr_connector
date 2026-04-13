@@ -4,7 +4,7 @@ logs/
 .direnv/
 .envrc
 package-lock.yml
-CLAUDE.md
 uv.lock
 ui.db
 .venv/
+.claude
