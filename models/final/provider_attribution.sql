@@ -1,5 +1,6 @@
 SELECT
     cast(bene_mbi_id as {{ dbt.type_string() }}) as person_id
+  , cast(bene_mbi_id as {{ dbt.type_string() }}) as member_id
   , cast(bene_mbi_id as {{ dbt.type_string() }}) as patient_id
   , cast({{ format_yyyymm('enroll_month') }} as {{ dbt.type_string() }}) as year_month
   , cast('medicare' as {{ dbt.type_string() }}) as payer
