@@ -2,7 +2,7 @@
 name: 'cms_aalr_connector'
 version: '0.1.0'
 
-profile: 'tuva'
+profile: 'default'
 
 vars:
   input_database: tuva
