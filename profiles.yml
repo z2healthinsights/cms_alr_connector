@@ -4,12 +4,12 @@ vbca:
     dev:
       type: snowflake
       database: VBCA_TUVA_DEV
-      schema: TUVA_WH
-      warehouse: VBCA_DBT_WH
-      role: TUVA_FULL
+      schema: TUVA_DBT
+      warehouse: TUVA_WH
+      role: TUVA
     prod:
       type: snowflake
       database: VBCA_TUVA
-      schema: TUVA_WH
-      warehouse: VBCA_DBT_WH
-      role: TUVA_FULL
+      schema: TUVA_DBT
+      warehouse: TUVA_WH
+      role: TUVA
