@@ -2,7 +2,7 @@
 name: 'cms_aalr_connector'
 version: '0.1.0'
 
-profile: 'vbca_local'
+profile: 'vbca'
 
 vars:
   input_database: vbca_tuva
