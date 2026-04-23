@@ -7,9 +7,13 @@ vbca:
       schema: MIKE_DBT
       warehouse: TUVA_WH
       role: TUVA
+      threads: 8
+      query_tag: dbt
     prod:
       type: snowflake
       database: VBCA_TUVA
       schema: MIKE_DBT
       warehouse: TUVA_WH
       role: TUVA
+      threads: 8
+      query_tag: dbt
