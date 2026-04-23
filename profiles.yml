@@ -1,0 +1,17 @@
+vbca:
+  target: dev
+  outputs:
+    dev:
+      role: TUVA
+      database: VBCA_TUVA_DEV
+      warehouse: TUVA_WH
+      schema: TUVA_DBT
+      threads: 8
+      query_tag: dbt
+    prod:
+      role: TUVA
+      database: VBCA_TUVA
+      warehouse: TUVA_WH
+      schema: TUVA_DBT
+      threads: 8
+      query_tag: dbt

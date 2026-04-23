@@ -1,9 +1,9 @@
 target/
-dbt_packages/
+# dbt_packages/
 logs/
 .direnv/
 .envrc
-package-lock.yml
+# package-lock.yml
 uv.lock
 ui.db
 .venv/
