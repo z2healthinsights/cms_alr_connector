@@ -2,16 +2,14 @@ vbca:
   target: dev
   outputs:
     dev:
-      role: TUVA
+      type: snowflake
       database: VBCA_TUVA_DEV
-      warehouse: TUVA_WH
-      schema: TUVA_DBT
-      threads: 8
-      query_tag: dbt
+      schema: TUVA_WH
+      warehouse: VBCA_DBT_WH
+      role: TUVA_FULL
     prod:
-      role: TUVA
+      type: snowflake
       database: VBCA_TUVA
-      warehouse: TUVA_WH
-      schema: TUVA_DBT
-      threads: 8
-      query_tag: dbt
+      schema: TUVA_WH
+      warehouse: VBCA_DBT_WH
+      role: TUVA_FULL
