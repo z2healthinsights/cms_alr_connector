@@ -6,7 +6,7 @@ vbca:
       database: VBCA_TUVA_DEV
       schema: MIKE_DBT
       warehouse: TUVA_WH
-      role: TUVA
+      role: ACCOUNTADMIN
       threads: 8
       query_tag: dbt
     prod:
@@ -14,6 +14,6 @@ vbca:
       database: VBCA_TUVA
       schema: MIKE_DBT
       warehouse: TUVA_WH
-      role: TUVA
+      role: ACCOUNTADMIN
       threads: 8
       query_tag: dbt
